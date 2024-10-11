@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/sever.js"
+    "start": "npx nodemon ./src/sever.js"
   },
   "author": "CuongDo",
   "license": "ISC",
@@ -33,6 +33,6 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.7"
   }
 }
