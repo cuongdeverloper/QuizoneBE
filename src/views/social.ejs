@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body>
+    <input id="accessToken" value="<%= accessToken %>" type="hidden">
+    <input id="refreshToken" value="<%= refreshToken %>" type="hidden">
+    <input id="user" value="<%= JSON.stringify(user) %>" type="hidden">
+    <script>
+        $(document).ready(function () {
+            const accessToken = $('#accessToken').val();
+            const refreshToken = $('#refreshToken').val();
+            const user = $('#user').val();
+
+            // Check if tokens are present
+            if (accessToken && refreshToken) {
+                // Set cookies
+                document.cookie = `accessToken=${accessToken}; path=/; SameSite=Lax; Secure`;
+                document.cookie = `refreshToken=${refreshToken}; path=/; SameSite=Lax; Secure`;
+                document.cookie = `user=${user}; path=/; SameSite=Lax; Secure`;
+
+                console.log("Stored Access Token:", accessToken);
+                console.log("Stored Refresh Token:", refreshToken);
+                console.log("Stored User:", user);
+            } else {
+                console.log("Access or refresh token is missing.");
+            }
+
+            // Redirect to another URL
+            const redirectURL = `http://localhost:7070`;
+            setTimeout(() => {
+                window.location.href = redirectURL;
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>
