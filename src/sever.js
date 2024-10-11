@@ -44,8 +44,9 @@ app.use(session({
   // API routes
   app.use('/', routerApi);
 //   app.use('/', ApiNodejs);
-  
-  // Error handling middleware
+app.get("/", (req, res) => {
+  res.json("Hello");
+})  // Error handling middleware
   app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
