@@ -2,7 +2,7 @@ const uploadCloud = require('../config/cloudinaryConfig');
 const { sendMail } = require('../config/mailSendConfig');
 const { createJWT, createRefreshToken, verifyAccessToken, createJWTResetPassword } = require('../middleware/JWTAction');
 const user = require('../modal/User');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const UserOTPVerification = require('../modal/UserOTPVerification');
 const PasswordReset = require('../modal/PasswordReset');
 require('dotenv').config();
