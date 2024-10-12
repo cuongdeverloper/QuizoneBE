@@ -19,22 +19,30 @@ routerApi.post('/auth', apiLogin);
 routerApi.post('/register',apiRegister)
 routerApi.get('/auth/google',
     passport.authenticate('google', { scope: ['profile', 'email'] }));
+
     routerApi.get('/google/redirect', 
-        passport.authenticate('google', { failureRedirect: 'https://flash-card-fe-client.vercel.app/login' }), 
-        (req, res) => {
-          const payload = { email: req.user.email, name: req.user.username, role: req.user.role, id: req.user.id };
-      
+      passport.authenticate('google', { failureRedirect: 'https://flash-card-fe-client.vercel.app/login' }), 
+      (req, res) => {
+          // Create a payload for JWT
+          const payload = { 
+              email: req.user.email, 
+              name: req.user.username, 
+              role: req.user.role, 
+              id: req.user.id 
+          };
+  
+          // Generate access and refresh tokens
           const accessToken = createJWT(payload);
           const refreshToken = createRefreshToken(payload);
-      
-          // Send the tokens and user data to the frontend
-          res.json({
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-            user: req.user
-          });
-        }
-      );
+  
+          // Construct the redirect URL
+          const redirectUrl = `https://flash-card-fe-client.vercel.app/auth/callback?accessToken=${encodeURIComponent(accessToken)}&refreshToken=${encodeURIComponent(refreshToken)}&user=${encodeURIComponent(JSON.stringify(req.user))}`;
+  
+          // Redirect to the frontend with tokens
+          res.redirect(redirectUrl);
+      }
+  );
+  
 routerApi.post('/decode-token', (req, res) => {
     const { token } = req.body;
     const data = decodeToken(token);
