@@ -19,19 +19,22 @@ routerApi.post('/auth', apiLogin);
 routerApi.post('/register',apiRegister)
 routerApi.get('/auth/google',
     passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-routerApi.get('/google/redirect',
-    passport.authenticate('google', { failureRedirect: 'https://flash-card-fe-client.vercel.app/login' }),
-    (req, res) => {
-
-        const payload = { email: req.user.email, name: req.user.username, role: req.user.role, id: req.user.id };
-
-        const accessToken = createJWT(payload);
-        const refreshToken = createRefreshToken(payload);
-
-        res.render('social.ejs', { accessToken: accessToken, refreshToken: refreshToken, user: req.user })
-        
-    });
+    routerApi.get('/google/redirect', 
+        passport.authenticate('google', { failureRedirect: 'https://flash-card-fe-client.vercel.app/login' }), 
+        (req, res) => {
+          const payload = { email: req.user.email, name: req.user.username, role: req.user.role, id: req.user.id };
+      
+          const accessToken = createJWT(payload);
+          const refreshToken = createRefreshToken(payload);
+      
+          // Send the tokens and user data to the frontend
+          res.json({
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            user: req.user
+          });
+        }
+      );
 routerApi.post('/decode-token', (req, res) => {
     const { token } = req.body;
     const data = decodeToken(token);
