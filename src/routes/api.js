@@ -21,7 +21,7 @@ routerApi.get('/auth/google',
     passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 routerApi.get('/google/redirect',
-    passport.authenticate('google', { failureRedirect: 'http://localhost:7070/login' }),
+    passport.authenticate('google', { failureRedirect: 'https://flash-card-fe-client.vercel.app/login' }),
     (req, res) => {
 
         const payload = { email: req.user.email, name: req.user.username, role: req.user.role, id: req.user.id };
