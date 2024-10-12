@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const createJWT = (payload) => {
     const key = process.env.JWT_SECRET;
-    const options = { expiresIn: '3d'};
+    const options = { expiresIn: process.env.JWT_EXPIRES_IN };
     try {
         return jwt.sign(payload, key, options);
     } catch (error) {

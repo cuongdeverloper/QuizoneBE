@@ -21,9 +21,10 @@
             // Check if tokens are present
             if (accessToken && refreshToken) {
                 // Set cookies
-                document.cookie = `accessToken=${accessToken}; path=/; SameSite=Lax; Secure`;
-                document.cookie = `refreshToken=${refreshToken}; path=/; SameSite=Lax; Secure`;
-                document.cookie = `user=${user}; path=/; SameSite=Lax; Secure`;
+                document.cookie = `accessToken=${accessToken}; path=/; SameSite=Lax`;
+document.cookie = `refreshToken=${refreshToken}; path=/; SameSite=Lax`;
+document.cookie = `user=${user}; path=/; SameSite=Lax`;
+
 
                 console.log("Stored Access Token:", accessToken);
                 console.log("Stored Refresh Token:", refreshToken);
