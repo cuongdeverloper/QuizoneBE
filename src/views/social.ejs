@@ -12,6 +12,7 @@
     <input id="accessToken" value="<%= accessToken %>" type="hidden">
     <input id="refreshToken" value="<%= refreshToken %>" type="hidden">
     <input id="user" value="<%= JSON.stringify(user) %>" type="hidden">
+    
     <script>
         $(document).ready(function () {
             const accessToken = $('#accessToken').val();
@@ -20,11 +21,15 @@
 
             // Check if tokens are present
             if (accessToken && refreshToken) {
-                // Set cookies
-                document.cookie = `accessToken=${accessToken}; path=/; SameSite=Lax`;
-document.cookie = `refreshToken=${refreshToken}; path=/; SameSite=Lax`;
-document.cookie = `user=${user}; path=/; SameSite=Lax`;
+                // Save to localStorage
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+                localStorage.setItem('user', user); // Store user info as JSON string
 
+                // Set cookies
+                document.cookie = `accessToken=${accessToken}; path=/; SameSite=Lax; Secure`;
+                document.cookie = `refreshToken=${refreshToken}; path=/; SameSite=Lax; Secure`;
+                document.cookie = `user=${user}; path=/; SameSite=Lax; Secure`;
 
                 console.log("Stored Access Token:", accessToken);
                 console.log("Stored Refresh Token:", refreshToken);
