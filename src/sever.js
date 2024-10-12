@@ -34,9 +34,10 @@ app.use(session({
   
   // Configure CORS
   app.use(cors({
-    origin: 'https://flash-card-fe-client.vercel.app',
+    origin: ['https://flash-card-fe-client.vercel.app', 'http://localhost:7070'],
     credentials: true,
   }));
+  
   
   // Use your view engine configuration if rendering views
   configViewEngine(app);
