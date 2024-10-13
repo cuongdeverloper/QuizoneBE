@@ -9,7 +9,7 @@ const { addComment, getComments, getCommentById, deleteComment, addReply, delete
 const { createClass, getClassesForUser, inviteStudentToClass, getClassByClassId, removeQuestionPackFromClass, joinClassByInvite, getStudentsByClassId, getAllMembersByClassId } = require('../controller/ApiClass');
 const { sendMessage, getMessages } = require('../controller/ApiMessage');
 const { addExam, getExam, getExamByQuestionPack } = require('../controller/ApiExam');
-const { submitExam, getExamResults } = require('../controller/ApiResult');
+const { submitExam, getExamResults, getStudentResults } = require('../controller/ApiResult');
 
 const routerApi = express.Router();
 
@@ -102,6 +102,7 @@ routerApi.get('/exam/:questionPackId', checkAccessToken, getExamByQuestionPack);
 //result
 routerApi.post('/finish',checkAccessToken,submitExam)
 routerApi.get('/results/:examId',checkAccessToken,getExamResults)
+routerApi.get('/results-student/',checkAccessToken ,getStudentResults);
 //teacher
 routerApi.get('/getQp4Teacher/:teacherId',checkAccessToken,getAllQuestionPacksForTeacher)
 
