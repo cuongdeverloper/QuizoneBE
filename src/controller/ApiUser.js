@@ -155,7 +155,7 @@ const updateUserProfile = async (req, res) => {
         return res.status(404).json({ message: 'User not found.' });
       }
 
-      res.status(200).json({ message: 'User profile updated successfully', user: updatedUser });
+      res.status(200).json({ errorCode:0,message: 'User profile updated successfully', user: updatedUser });
     } catch (error) {
       if (error.code === 11000) {
         return res.status(400).json({ message: 'Username or email already exists.' });
