@@ -72,15 +72,27 @@ const submitExam = async (req, res) => {
     }
   };
   const getStudentResults = async (req, res) => {
-    
-        const studentId = req.user.id;
-      
-        const results = await Result.find({ student: studentId }).populate('exam', 'title');
+    const studentId = req.user.id;
+
+    try {
+        // Fetch results and populate exam and questionPack
+        const results = await Result.find({ student: studentId })
+            .populate({
+                path: 'exam',
+                populate: {
+                    path: 'questionPack', // Populate questionPack from Exam
+                },
+            });
+
         if (!results.length) {
             return res.status(404).json({ error: 'No results found for this student.' });
         }
 
         res.status(200).json({ success: true, results });
-    
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred while fetching results.' });
+    }
 };
+
 module.exports = { submitExam,getExamResults,getStudentResults };
