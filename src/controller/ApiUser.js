@@ -116,4 +116,53 @@ const getAllUsers = async (req, res) => {
     });
   }
 };
-module.exports = { addUser,getUserFromUserId,getId,searchUser,getAllUsers };
+const updateUserProfile = async (req, res) => {
+  const { userId } = req.params; 
+  uploadCloud.single('image')(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ message: `Image upload error: ${err.message}` });
+    }
+
+    const { username, role, email, phoneNumber, gender } = req.body;
+    const image = req.file ? req.file.path : null; 
+    if (userId !== req.user.id) {
+      return res.status(403).json({ message: 'Forbidden: You can only update your own profile.' });
+    }
+    if (!username || !email) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    const validRoles = ['teacher', 'student', 'admin'];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({ message: 'Invalid role.' });
+    }
+
+    try {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        {
+          username,
+          role,
+          email,
+          phoneNumber,
+          gender,
+          image 
+        },
+        { new: true, runValidators: true } // Return the updated document and run validators
+      );
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+
+      res.status(200).json({ message: 'User profile updated successfully', user: updatedUser });
+    } catch (error) {
+      if (error.code === 11000) {
+        return res.status(400).json({ message: 'Username or email already exists.' });
+      }
+      res.status(500).json({ message: 'Error updating user profile', error });
+    }
+  });
+};
+
+module.exports = { addUser,getUserFromUserId,getId,searchUser,getAllUsers,updateUserProfile };

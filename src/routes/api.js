@@ -58,6 +58,7 @@ routerApi.post('/user', addUser)
 routerApi.get('/user/:userId', getUserFromUserId)
 routerApi.get('/searchUser',checkAccessToken,searchUser)
 routerApi.get('/users',checkAccessToken,getAllUsers)
+routerApi.put('/user/:userId', getUserFromUserId)
 //Api QuestionPack
 routerApi.post('/questionPack', checkAccessToken, createQuestionPack)
 routerApi.get('/questionPack', getAllQuestionPack)
