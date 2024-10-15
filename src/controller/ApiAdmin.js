@@ -1,5 +1,5 @@
 const User = require("../modal/User");
-const Flashcard = require('../modal/Flashcard');
+const Flashcard = require('../modal/FlashCard');
 const QuestionPack = require('../modal/QuestionPack');
 const getDashboardData = async (req, res) => {
     const user = req.user;
