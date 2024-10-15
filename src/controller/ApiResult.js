@@ -51,21 +51,35 @@ const submitExam = async (req, res) => {
     try {
       const { examId } = req.params;
       const teacherId = req.user.id; 
+      
       // Ensure the teacher owns the exam
-      const exam = await Exam.findById(examId).populate('questionPack');
-
+      const exam = await Exam.findById(examId)
+        .populate({
+          path: 'questionPack',  // Populate the question pack
+          populate: {
+            path: 'questions',    // Populate the questions inside the question pack
+            select: 'answers',    // Only return the answers field from each question
+          }
+        });
+  
       if (!exam || exam.questionPack.teacher.toString() !== teacherId) {
         return res.status(403).json({ error: 'You do not have access to this exam.' });
       }
   
       // Find all results for this exam
-      const results = await Result.find({ exam: examId }).populate('student', 'name email');
-      console.log(results)
+      const results = await Result.find({ exam: examId })
+        .populate('student', 'username name email'); // Populate student details
+      
       if (!results.length) {
         return res.status(404).json({ error: 'No results found for this exam.' });
       }
   
-      res.status(200).json({ success: true, results });
+      // Return the exam results along with the answers from the question pack
+      res.status(200).json({ 
+        success: true, 
+        answers: exam.questionPack.questions.map(question => question.answers), // Only return the answers from each question
+        results 
+      });
     } catch (error) {
       console.error('Error fetching exam results:', error);
       res.status(500).json({ error: 'An error occurred while fetching the results.' });
