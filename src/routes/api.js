@@ -10,6 +10,7 @@ const { createClass, getClassesForUser, inviteStudentToClass, getClassByClassId,
 const { sendMessage, getMessages } = require('../controller/ApiMessage');
 const { addExam, getExam, getExamByQuestionPack } = require('../controller/ApiExam');
 const { submitExam, getExamResults, getStudentResults } = require('../controller/ApiResult');
+const { getDashboardData } = require('../controller/ApiAdmin');
 
 const routerApi = express.Router();
 
@@ -111,4 +112,8 @@ routerApi.post('/verify-otp', verifyOtp);
 
 routerApi.post('/rqreset-password', requestPasswordReset);
 routerApi.post('/reset-password', resetPassword);
+
+
+//Admin
+routerApi.get('/dashboard-admin',checkAccessToken ,getDashboardData);
 module.exports = { routerApi };

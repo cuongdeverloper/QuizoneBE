@@ -3,9 +3,13 @@ const User = require('../modal/User');
 const crypto = require('crypto');
 const createClass = async (req, res) => {
   try {
+      const authenticatedUser = req.user;
+      if (authenticatedUser.role !== 'teacher' &&  authenticatedUser.role !== 'admin') {
+          return res.status(403).json({ message: 'Only teachers or admins can create classes' });
+      }
+
       const name = req.body.name;
       const students = Array.isArray(req.body.students) ? req.body.students : [];
-      const authenticatedUser = req.user;
       const creatorId = authenticatedUser.id;
 
       let validStudents = [];
@@ -31,14 +35,12 @@ const createClass = async (req, res) => {
       return res.status(201).json({
           message: 'Class created successfully',
           data: newClass,
-          
       });
   } catch (error) {
       console.error('Error creating class:', error);
       return res.status(500).json({ message: 'An error occurred while creating the class' });
   }
 };
-  
   const getAllClasses = async (req, res) => {
     try {
       const authenticatedUser = req.user;
