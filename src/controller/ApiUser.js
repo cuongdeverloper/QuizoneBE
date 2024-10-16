@@ -125,7 +125,7 @@ const updateUserProfile = async (req, res) => {
 
     const { username, role, email, phoneNumber, gender } = req.body;
     const image = req.file ? req.file.path : null; 
-    if (userId !== req.user.id) {
+    if (userId !== req.user.id && req.user.role !=='admin') {
       return res.status(403).json({ message: 'Forbidden: You can only update your own profile.' });
     }
     if (!username || !email) {
