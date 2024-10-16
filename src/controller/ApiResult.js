@@ -94,13 +94,11 @@ const submitExam = async (req, res) => {
             .populate({
                 path: 'exam',
                 populate: {
-                    path: 'questionPack', // Populate questionPack from Exam
+                    path: 'questionPack', 
                 },
             });
 
-        if (!results.length) {
-            return res.status(404).json({ error: 'No results found for this student.' });
-        }
+        
 
         res.status(200).json({ success: true, results });
     } catch (error) {
