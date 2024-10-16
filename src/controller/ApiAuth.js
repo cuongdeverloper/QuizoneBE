@@ -2,7 +2,7 @@ const uploadCloud = require('../config/cloudinaryConfig');
 const { sendMail } = require('../config/mailSendConfig');
 const { createJWT, createRefreshToken, verifyAccessToken, createJWTResetPassword } = require('../middleware/JWTAction');
 const user = require('../modal/User');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const UserOTPVerification = require('../modal/UserOTPVerification');
 const PasswordReset = require('../modal/PasswordReset');
 require('dotenv').config();
@@ -28,6 +28,9 @@ const apiLogin = async (req, res) => {
 
 
     const isPasswordValid = await bcrypt.compare(password, userRecord.password);
+    console.log('Password entered:', password);  // Mật khẩu người dùng nhập vào
+    console.log('Password in DB (hashed):', userRecord.password);  // Mật khẩu đã mã hóa trong DB
+    
     if (!isPasswordValid) {
       return res.status(400).json({
         errorCode: 3,
@@ -103,20 +106,16 @@ const apiRegister = async (req, res) => {
         });
       }
 
-      // Hash the password before saving
-      const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Create new user
       const newUser = new user({
         username,
         email,
-        password: hashedPassword,
+        password,
         phoneNumber,
         gender,
         role: role || 'student',
         image,
       });
-
       await newUser.save();
 
       // Generate OTP
@@ -144,7 +143,7 @@ const apiRegister = async (req, res) => {
           await UserOTPVerification.deleteMany({ userId: newUser._id });
           console.log(`Deleted unverified user with ID: ${newUser._id}`);
         }
-      }, 5 * 60 * 1000); // 5 minutes timeout
+      }, 5 * 60 * 1000); 
 
       return res.status(201).json({
         errorCode: 0,
