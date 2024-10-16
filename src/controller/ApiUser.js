@@ -165,4 +165,24 @@ const updateUserProfile = async (req, res) => {
   });
 };
 
-module.exports = { addUser,getUserFromUserId,getId,searchUser,getAllUsers,updateUserProfile };
+const deleteUser = async (req, res) => {
+  const { userId } = req.params;
+
+  if (req.user.id !== userId && req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Forbidden: You can only delete your own account or you must be an admin.' });
+  }
+
+  try {
+    const deletedUser = await User.findByIdAndDelete(userId);
+    
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    res.status(200).json({ message: 'User deleted successfully.', user: deletedUser });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error deleting user', error });
+  }
+};
+module.exports = { addUser,getUserFromUserId,getId,searchUser,getAllUsers,updateUserProfile,deleteUser };

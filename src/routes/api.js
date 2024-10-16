@@ -1,5 +1,5 @@
 const express = require('express');
-const { addUser, getUserFromUserId, getId, searchUser, getAllUsers, updateUserProfile } = require('../controller/ApiUser');
+const { addUser, getUserFromUserId, getId, searchUser, getAllUsers, updateUserProfile, deleteUser } = require('../controller/ApiUser');
 const { apiLogin, apiRegister, verifyOtp, resendOTPVerificationCode, requestPasswordReset, resetPassword } = require('../controller/ApiAuth');
 const { createRefreshToken, createJWT, decodeToken, checkAccessToken } = require('../middleware/JWTAction');
 const passport = require('passport');
@@ -60,6 +60,8 @@ routerApi.get('/user/:userId', getUserFromUserId)
 routerApi.get('/searchUser',checkAccessToken,searchUser)
 routerApi.get('/users',checkAccessToken,getAllUsers)
 routerApi.put('/user/:userId',checkAccessToken,updateUserProfile)
+routerApi.delete('/user/:userId',checkAccessToken,deleteUser)
+
 //Api QuestionPack
 routerApi.post('/questionPack', checkAccessToken, createQuestionPack)
 routerApi.get('/questionPack', getAllQuestionPack)
