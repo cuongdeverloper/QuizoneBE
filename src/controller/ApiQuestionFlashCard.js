@@ -88,7 +88,9 @@ const addQuestionFlashCard = (req, res) => {
 const getQuestionFlashCardByQuestionPackId = async (req, res) => {
   try {
     const { questionPackId } = req.params;
-    const userId= req.user.id
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
     // Find the QuestionPack by ID and populate the questions (flashcards)
     const questionPack = await QuestionPack.findById(questionPackId).populate('questions').lean();
 
@@ -99,15 +101,39 @@ const getQuestionFlashCardByQuestionPackId = async (req, res) => {
         message: 'QuestionPack not found'
       });
     }
-    if((!questionPack.isPublic && questionPack.classId === null )){
-      console.log('123',questionPack.teacher._id.toString())
-      if (questionPack.teacher._id.toString() !== userId) {
-        return res.status(200).json({
+
+    // Check if the QuestionPack is private and the classId is not null
+    if (!questionPack.isPublic && questionPack.classId !== null) {
+      const classData = await Class.findById(questionPack.classId).lean();
+
+      // If the class doesn't exist
+      if (!classData) {
+        return res.status(404).json({
+          errorCode: 7,
+          message: 'Class not found'
+        });
+      }
+
+      // Check if the user is a student in the class or the teacher/admin
+      const isStudentInClass = classData.students.some(student => student.toString() === userId);
+      const isTeacher = classData.teacher.toString() === userId;
+      
+      if (!(isStudentInClass || isTeacher || userRole === 'admin')) {
+        return res.status(403).json({
           errorCode: 2,
-          message: 'Access denied: Only the teacher can view this question pack.'
+          message: 'Access denied: Only students in the class, the teacher, or an admin can view this question pack.'
+        });
+      }
+    } else if (!questionPack.isPublic && questionPack.classId === null) {
+      // If question pack is private but not associated with a class
+      if (questionPack.teacher._id.toString() !== userId && userRole !== 'admin') {
+        return res.status(403).json({
+          errorCode: 2,
+          message: 'Access denied: Only the teacher or admin can view this question pack.'
         });
       }
     }
+
     // Check if the QuestionPack has any flashcards
     if (!questionPack.questions || questionPack.questions.length === 0) {
       return res.status(200).json({
