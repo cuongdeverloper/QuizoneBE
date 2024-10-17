@@ -27,7 +27,7 @@ const createQuestionPack = async (req, res) => {
     try {
       // Check if the authenticated user is a teacher
       const authenticatedUser = req.user;
-      if (authenticatedUser.role !== 'teacher') {
+      if (authenticatedUser.role !== 'teacher' || authenticatedUser.role !== 'admin') {
         return res.status(403).json({
           errorCode: 7,
           message: 'Only teachers can create question packs'
