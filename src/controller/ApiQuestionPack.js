@@ -34,14 +34,7 @@ const createQuestionPack = async (req, res) => {
         });
       }
 
-      // Check if the provided teacher ID exists and is a teacher
-      const teacherUser = await User.findById(teacher);
-      if (!teacherUser || teacherUser.role !== 'teacher') {
-        return res.status(404).json({
-          errorCode: 8,
-          message: 'Invalid teacher ID or the user is not a teacher'
-        });
-      }
+   
 
       // Check if classId is provided and valid
       let classInfo = null;
