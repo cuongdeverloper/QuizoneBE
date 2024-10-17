@@ -3,7 +3,7 @@ const { addUser, getUserFromUserId, getId, searchUser, getAllUsers, updateUserPr
 const { apiLogin, apiRegister, verifyOtp, resendOTPVerificationCode, requestPasswordReset, resetPassword } = require('../controller/ApiAuth');
 const { createRefreshToken, createJWT, decodeToken, checkAccessToken } = require('../middleware/JWTAction');
 const passport = require('passport');
-const { createQuestionPack, getAllQuestionPack, searchQuestionPack, addQuestionPackToClass, getQuestionPackById, getAllQuestionPacksForTeacher, updateQuestionPack } = require('../controller/ApiQuestionPack');
+const { createQuestionPack, getAllQuestionPack, searchQuestionPack, addQuestionPackToClass, getQuestionPackById, getAllQuestionPacksForTeacher, updateQuestionPack, getAllQuestionPackByAd } = require('../controller/ApiQuestionPack');
 const { addQuestionFlashCard, getQuestionFlashCardByQuestionPackId, updateFlashcard } = require('../controller/ApiQuestionFlashCard');
 const { addComment, getComments, getCommentById, deleteComment, addReply, deleteReply } = require('../controller/ApiComment');
 const { createClass, getClassesForUser, inviteStudentToClass, getClassByClassId, removeQuestionPackFromClass, joinClassByInvite, getStudentsByClassId, getAllMembersByClassId } = require('../controller/ApiClass');
@@ -68,6 +68,7 @@ routerApi.get('/questionPack', getAllQuestionPack)
 routerApi.get('/questionPacks/search', searchQuestionPack)
 routerApi.get('/questionPacks/:questionPackId', checkAccessToken,getQuestionPackById)
 routerApi.put('/questionpack/:questionpackId',checkAccessToken,updateQuestionPack);
+routerApi.get('/questionPacks-adm', checkAccessToken,getAllQuestionPackByAd)
 
 routerApi.get('/questionPack/:questionPackId', checkAccessToken,getQuestionFlashCardByQuestionPackId)
 //Api questionFC

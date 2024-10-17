@@ -107,6 +107,32 @@ const getAllQuestionPack = async (req, res) => {
   }
 };
 
+const getAllQuestionPackByAd = async(req,res) =>{
+  try {
+    const user = req.user;
+    if(user.role !== 'admin') {
+      return res.status(500).json({
+        errorCode: 5,
+        message: 'Only admin can access this.'
+      });
+    }
+    const questionPacks = await QuestionPack.find({ })
+      .populate('teacher', 'name email') 
+
+    // Send the public question packs as the response
+    return res.status(200).json({
+      errorCode: 0,
+      message: 'Public question packs retrieved successfully',
+      data: questionPacks
+    });
+  } catch (err) {
+    console.error('Error fetching question packs:', err);
+    return res.status(500).json({
+      errorCode: 6,
+      message: 'An error occurred while fetching the question packs'
+    });
+  }
+}
 const searchQuestionPack = async (req, res) => {
   const { query } = req.query;
 
@@ -366,4 +392,5 @@ const updateQuestionPack = async (req, res) => {
 
 
 module.exports = { createQuestionPack,getAllQuestionPack,searchQuestionPack,
-  addQuestionPackToClass,getQuestionPackById,getAllQuestionPacksForTeacher,updateQuestionPack };
+  addQuestionPackToClass,getQuestionPackById,getAllQuestionPacksForTeacher,updateQuestionPack,
+getAllQuestionPackByAd };
