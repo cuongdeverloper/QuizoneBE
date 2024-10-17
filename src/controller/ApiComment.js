@@ -79,7 +79,7 @@ const addComment = async (req, res) => {
             message: 'Comments retrieved successfully',
             data: comments.map(comment => ({
                 ...comment.toObject(),
-                isOwner: comment.user.toString() === req.user.id 
+                isOwner: comment.user === req.user.id 
             })),
             total: totalComments,
             page: parseInt(page),
