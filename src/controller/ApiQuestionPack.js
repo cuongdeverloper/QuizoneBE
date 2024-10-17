@@ -170,6 +170,7 @@ const addQuestionPackToClass = async (req, res) => {
     const { classId, questionPackId } = req.body; 
     const authenticatedUser = req.user;
 
+    // Check if the class exists
     const classData = await Class.findById(classId);
     if (!classData) {
       return res.status(404).json({
@@ -178,6 +179,7 @@ const addQuestionPackToClass = async (req, res) => {
       });
     }
 
+    // Check if the user is authorized (the teacher of the class)
     if (classData.teacher.toString() !== authenticatedUser.id.toString()) {
       return res.status(403).json({
         errorCode: 7,
@@ -185,6 +187,7 @@ const addQuestionPackToClass = async (req, res) => {
       });
     }
 
+    // Check if the question pack exists
     const questionPack = await QuestionPack.findById(questionPackId);
     if (!questionPack) {
       return res.status(404).json({
@@ -193,13 +196,16 @@ const addQuestionPackToClass = async (req, res) => {
       });
     }
 
+    // Check if the question pack is already in the class
     if (classData.questionPacks.includes(questionPackId)) {
-      return res.status(400).json({
-        errorCode: 9,
-        message: 'Question pack is already added to this class'
+      return res.status(200).json({  // Using status 200 as it's a valid response (can be 409 for conflict)
+        errorCode: 10,
+        message: 'Question pack already exists in this class',
+        data: classData
       });
     }
 
+    // Add the question pack to the class
     classData.questionPacks.push(questionPackId);
     await classData.save();
 
@@ -217,6 +223,7 @@ const addQuestionPackToClass = async (req, res) => {
     });
   }
 };
+
 const getQuestionPackById = async (req, res) => {
   try {
     const { questionPackId } = req.params;
