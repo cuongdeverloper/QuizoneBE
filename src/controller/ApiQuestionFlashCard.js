@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const uploadCloud = require("../config/cloudinaryConfig");
 const QuestionPack = require('../modal/QuestionPack');
 const FlashCard = require('../modal/FlashCard');
+const Class = require('../modal/Class');
 
 
 const addQuestionFlashCard = (req, res) => {
@@ -160,6 +161,7 @@ const getQuestionFlashCardByQuestionPackId = async (req, res) => {
   }
 };
 
+
 const updateFlashcard = (req, res) => {
   // Use multer to handle the image upload
   uploadCloud.single('imagePreview')(req, res, async (err) => {
@@ -209,5 +211,58 @@ const updateFlashcard = (req, res) => {
 };
 
 
+const deleteFlashcard = async (req, res) => {
+  const flashcardId = req.params.flashcardId; 
+  const userId = req.user.id; 
 
-module.exports = { addQuestionFlashCard, getQuestionFlashCardByQuestionPackId,updateFlashcard };
+  try {
+    // Find the Flashcard by ID
+    const flashcard = await FlashCard.findById(flashcardId);
+    if (!flashcard) {
+      return res.status(404).json({
+        errorCode: 6,
+        message: 'Flashcard not found'
+      });
+    }
+
+    // Find the associated QuestionPack
+    const questionPack = await QuestionPack.findById(flashcard.questionPack);
+    if (!questionPack) {
+      return res.status(404).json({
+        errorCode: 6,
+        message: 'QuestionPack not found'
+      });
+    }
+
+    // Check if the logged-in user is the owner (teacher) of the QuestionPack
+    if (questionPack.teacher.toString() !== userId) {
+      return res.status(403).json({
+        errorCode: 2,
+        message: 'Access denied: Only the owner (teacher) of this QuestionPack can delete flashcards'
+      });
+    }
+
+    // Remove the flashcard reference from the QuestionPack's questions array
+    questionPack.questions = questionPack.questions.filter(
+      questionId => questionId.toString() !== flashcardId
+    );
+
+    // Save the updated QuestionPack
+    await questionPack.save();
+
+    // Delete the Flashcard using findByIdAndDelete
+    await FlashCard.findByIdAndDelete(flashcardId);
+
+    return res.status(200).json({
+      errorCode: 0,
+      message: 'Flashcard deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting flashcard:', error);
+    return res.status(500).json({
+      errorCode: 7,
+      message: 'An error occurred while deleting the flashcard'
+    });
+  }
+};
+module.exports = { addQuestionFlashCard, getQuestionFlashCardByQuestionPackId,updateFlashcard,deleteFlashcard };

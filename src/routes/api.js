@@ -4,7 +4,7 @@ const { apiLogin, apiRegister, verifyOtp, resendOTPVerificationCode, requestPass
 const { createRefreshToken, createJWT, decodeToken, checkAccessToken } = require('../middleware/JWTAction');
 const passport = require('passport');
 const { createQuestionPack, getAllQuestionPack, searchQuestionPack, addQuestionPackToClass, getQuestionPackById, getAllQuestionPacksForTeacher, updateQuestionPack, getAllQuestionPackByAd } = require('../controller/ApiQuestionPack');
-const { addQuestionFlashCard, getQuestionFlashCardByQuestionPackId, updateFlashcard } = require('../controller/ApiQuestionFlashCard');
+const { addQuestionFlashCard, getQuestionFlashCardByQuestionPackId, updateFlashcard, deleteFlashcard } = require('../controller/ApiQuestionFlashCard');
 const { addComment, getComments, getCommentById, deleteComment, addReply, deleteReply } = require('../controller/ApiComment');
 const { createClass, getClassesForUser, inviteStudentToClass, getClassByClassId, removeQuestionPackFromClass, joinClassByInvite, getStudentsByClassId, getAllMembersByClassId } = require('../controller/ApiClass');
 const { sendMessage, getMessages } = require('../controller/ApiMessage');
@@ -75,6 +75,8 @@ routerApi.get('/questionPack/:questionPackId', checkAccessToken,getQuestionFlash
 routerApi.post('/question',checkAccessToken, addQuestionFlashCard)
 routerApi.put('/flashcard/:flashcardId', checkAccessToken,updateFlashcard);
 
+//flashcard
+routerApi.delete('/flashcard/:flashcardId',checkAccessToken,deleteFlashcard)
 //Api comment
 routerApi.post('/questionpack/comments', checkAccessToken, addComment)
 routerApi.get('/questionpack/comments/:flashcardId', checkAccessToken, getComments)
