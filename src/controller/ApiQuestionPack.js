@@ -30,11 +30,11 @@ const createQuestionPack = async (req, res) => {
       if (authenticatedUser.role !== 'teacher' && authenticatedUser.role !== 'admin') {
         return res.status(403).json({
           errorCode: 7,
-          message: 'Only teachers or admin can create question packs'
+          message: 'Only teachers can create question packs'
         });
       }
 
-
+   
 
       // Check if classId is provided and valid
       let classInfo = null;
@@ -78,13 +78,14 @@ const createQuestionPack = async (req, res) => {
   });
 };
 
-const getAllQuestionPackPublicHomePage = async (req, res) => {
+const getAllQuestionPack = async (req, res) => {
   try {
+    // Retrieve all public question packs from the database (isPublic = true)
     const questionPacks = await QuestionPack.find({ isPublic: true })
-      .populate('teacher', 'name email')
-      .populate('questions', 'content'); 
+      .populate('teacher', 'name email') // populate the teacher's name and email
+      .populate('questions', 'content'); // populate the questions' content
 
-  
+    // Send the public question packs as the response
     return res.status(200).json({
       errorCode: 0,
       message: 'Public question packs retrieved successfully',
@@ -99,6 +100,32 @@ const getAllQuestionPackPublicHomePage = async (req, res) => {
   }
 };
 
+const getAllQuestionPackByAd = async(req,res) =>{
+  try {
+    const user = req.user;
+    if(user.role !== 'admin') {
+      return res.status(500).json({
+        errorCode: 5,
+        message: 'Only admin can access this.'
+      });
+    }
+    const questionPacks = await QuestionPack.find({ })
+      .populate('teacher', 'name email') 
+
+    // Send the public question packs as the response
+    return res.status(200).json({
+      errorCode: 0,
+      message: 'Public question packs retrieved successfully',
+      data: questionPacks
+    });
+  } catch (err) {
+    console.error('Error fetching question packs:', err);
+    return res.status(500).json({
+      errorCode: 6,
+      message: 'An error occurred while fetching the question packs'
+    });
+  }
+}
 const searchQuestionPack = async (req, res) => {
   const { query } = req.query;
 
@@ -217,7 +244,6 @@ const getQuestionPackById = async (req, res) => {
       });
     }
 if((!questionPack.isPublic && questionPack.classId === null )){
-  
   if (questionPack.teacher._id.toString() !== userId) {
     return res.status(200).json({
       errorCode: 2,
@@ -363,33 +389,6 @@ const updateQuestionPack = async (req, res) => {
     }
   });
 };
-
-const getAllQuestionPackByAd = async(req,res) =>{
-  try {
-    const user = req.user;
-    if(user.role !== 'admin') {
-      return res.status(500).json({
-        errorCode: 5,
-        message: 'Only admin can access this.'
-      });
-    }
-    const questionPacks = await QuestionPack.find({ })
-      .populate('teacher', 'name email') 
-
-    // Send the public question packs as the response
-    return res.status(200).json({
-      errorCode: 0,
-      message: 'Public question packs retrieved successfully',
-      data: questionPacks
-    });
-  } catch (err) {
-    console.error('Error fetching question packs:', err);
-    return res.status(500).json({
-      errorCode: 6,
-      message: 'An error occurred while fetching the question packs'
-    });
-  }
-}
 const deleteQuestionPack = async (req, res) => {
   try {
     const { questionPackId } = req.params;
@@ -428,6 +427,6 @@ const deleteQuestionPack = async (req, res) => {
   }
 };
 
-module.exports = { createQuestionPack,searchQuestionPack,
-  addQuestionPackToClass,getQuestionPackById,getAllQuestionPacksForTeacher
-  ,updateQuestionPack,getAllQuestionPackPublicHomePage,getAllQuestionPackByAd,deleteQuestionPack };
+module.exports = { createQuestionPack,getAllQuestionPack,searchQuestionPack,
+  addQuestionPackToClass,getQuestionPackById,getAllQuestionPacksForTeacher,updateQuestionPack,
+getAllQuestionPackByAd ,deleteQuestionPack};
