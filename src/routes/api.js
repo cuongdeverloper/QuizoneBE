@@ -1,6 +1,6 @@
 const express = require('express');
 const { addUser, getUserFromUserId, getId, searchUser, getAllUsers, updateUserProfile, deleteUser } = require('../controller/ApiUser');
-const { apiLogin, apiRegister, verifyOtp, resendOTPVerificationCode, requestPasswordReset, resetPassword } = require('../controller/ApiAuth');
+const { apiLogin, apiRegister, verifyOtp, resendOTPVerificationCode, requestPasswordReset, resetPassword, changePassword } = require('../controller/ApiAuth');
 const { createRefreshToken, createJWT, decodeToken, checkAccessToken } = require('../middleware/JWTAction');
 const passport = require('passport');
 const { createQuestionPack, getAllQuestionPack, searchQuestionPack, addQuestionPackToClass, getQuestionPackById, getAllQuestionPacksForTeacher, updateQuestionPack, getAllQuestionPackByAd, deleteQuestionPack } = require('../controller/ApiQuestionPack');
@@ -17,7 +17,9 @@ const routerApi = express.Router();
 routerApi.get('/id', checkAccessToken, getId)
 //auth
 routerApi.post('/auth', apiLogin);
-routerApi.post('/register',apiRegister)
+routerApi.post('/register',apiRegister);
+routerApi.post('/change-password',checkAccessToken,changePassword)
+
 routerApi.get('/auth/google',
     passport.authenticate('google', { scope: ['profile', 'email'] }));
 
