@@ -346,7 +346,7 @@ const changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
 
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({
+      return res.status(200).json({
         errorCode: 1,
         message: 'Current password and new password are required',
       });
@@ -354,7 +354,7 @@ const changePassword = async (req, res) => {
 
     const userRecord = await user.findById(userId);
     if (!userRecord) {
-      return res.status(404).json({
+      return res.status(200).json({
         errorCode: 2,
         message: 'User not found',
       });
@@ -362,7 +362,7 @@ const changePassword = async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(currentPassword, userRecord.password);
     if (!isPasswordValid) {
-      return res.status(400).json({
+      return res.status(200).json({
         errorCode: 3,
         message: 'Current password is incorrect',
       });
@@ -370,7 +370,7 @@ const changePassword = async (req, res) => {
 
     const isSamePassword = await bcrypt.compare(newPassword, userRecord.password);
     if (isSamePassword) {
-      return res.status(400).json({
+      return res.status(200).json({
         errorCode: 4,
         message: 'New password cannot be the same as the old password',
       });
@@ -391,6 +391,7 @@ const changePassword = async (req, res) => {
     });
   }
 };
+
 
 module.exports = {
   apiLogin,apiRegister,verifyOtp,resendOTPVerificationCode,
