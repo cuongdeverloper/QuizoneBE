@@ -376,7 +376,7 @@ const changePassword = async (req, res) => {
       });
     }
 
-    userRecord.password = await bcrypt.hash(newPassword, 10);
+    userRecord.password = newPassword
     await userRecord.save();
 
     return res.status(200).json({
