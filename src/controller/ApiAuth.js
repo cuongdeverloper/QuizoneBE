@@ -265,7 +265,7 @@ const requestPasswordReset = async (req, res) => {
     // Find user by email
     const userRecord = await user.findOne({ email });
     if (!userRecord) {
-      return res.status(400).json({ errorCode: 2, message: 'Email does not exist' });
+      return res.status(203).json({ errorCode: 2, message: 'Email does not exist' });
     }
 
     const payload = {
