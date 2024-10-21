@@ -12,6 +12,7 @@ const {app,server} = require('./socket/socket.js')
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 8888;
 var order = require('./routes/order');
+var path = require('path');
 
 // Configure request body parsing
 app.use(express.json());
