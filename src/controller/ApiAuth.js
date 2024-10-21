@@ -198,7 +198,7 @@ const verifyOtp = async (req, res) => {
 
 
     await user.findByIdAndUpdate(userId, { verified: true });
-
+    await UserOTPVerification.deleteMany({ userId });
     return res.status(200).json({
       errorCode: 0,
       message: 'OTP verification successful',

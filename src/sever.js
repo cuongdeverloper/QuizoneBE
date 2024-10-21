@@ -10,11 +10,8 @@ const { routerApi } = require('./routes/api.js');
 const doLoginWGoogle = require('./controller/social/GoogleController.js');
 const {app,server} = require('./socket/socket.js')
 const bodyParser = require('body-parser');
-const uploadCloud = require('./config/cloudinaryConfig.js');
-const { sendMail } = require('./config/mailSendConfig.js');
-// const app = express();
 const port = process.env.PORT || 8888;
-const hostname = process.env.HOST_NAME || 'localhost';
+var order = require('./routes/order');
 
 // Configure request body parsing
 app.use(express.json());
@@ -27,7 +24,8 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: true } // Set to true if using HTTPS
   }));
-  
+  app.set('views', path.join(__dirname, 'views'));
+  app.set('view engine', 'jade');
   // Initialize passport
   app.use(passport.initialize());
   app.use(passport.session()); // Enable passport session support
@@ -44,6 +42,8 @@ app.use(session({
   
   // API routes
   app.use('/', routerApi);
+  app.use('/order', order);
+
 //   app.use('/', ApiNodejs);
 app.get("/", (req, res) => {
   res.json("Hello");

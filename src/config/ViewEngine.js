@@ -3,7 +3,7 @@ const express = require('express');
 
 const configViewEngine = (app) => {
     app.set('views', path.join('./src', 'views'));
-    app.set('view engine', 'ejs');
+    app.set('view engine', 'jade');
 
     //config template engine
 
