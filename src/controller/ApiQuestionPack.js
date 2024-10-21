@@ -47,7 +47,7 @@ const createQuestionPack = async (req, res) => {
           });
         }
       }
-
+      const isPublicValue = isPublic === 'true' || isPublic === true; 
       // Create the new question pack
       const newQuestionPack = new QuestionPack({
         title,
@@ -58,7 +58,7 @@ const createQuestionPack = async (req, res) => {
         subject,
         imagePreview,
         classId: classInfo ? new mongoose.Types.ObjectId(classId) : null,
-        isPublic: isPublic === true 
+        isPublic:isPublicValue
       });
 
       await newQuestionPack.save();
