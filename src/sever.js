@@ -1,8 +1,6 @@
 const express = require('express');
 const configViewEngine = require('./config/ViewEngine.js');
 const cors = require('cors');
-const path = require('path');
-
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
