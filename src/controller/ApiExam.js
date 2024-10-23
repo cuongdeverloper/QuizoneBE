@@ -93,7 +93,7 @@ const getExamByQuestionPack = async (req, res) => {
       });
 
     if (!exam) {
-      return res.status(404).json({ error: 'No exam found for this question pack.' });
+      return res.status(203).json({ error: 'No exam found for this question pack.' });
     }
 
     // Process the exam and replace correctAnswers indices with actual answer values
