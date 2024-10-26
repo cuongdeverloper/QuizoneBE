@@ -32,7 +32,7 @@ const apiLogin = async (req, res) => {
     console.log('Password in DB (hashed):', userRecord.password);  // Mật khẩu đã mã hóa trong DB
     
     if (!isPasswordValid) {
-      return res.status(400).json({
+      return res.status(203).json({
         errorCode: 3,
         message: 'Invalid password'
       });
