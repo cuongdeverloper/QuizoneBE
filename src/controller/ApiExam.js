@@ -5,7 +5,7 @@ const QuestionPack = require("../modal/QuestionPack");
 const addExam = async (req, res) => {
   try {
     const teacherId = req.user.id;
-    const { classId, questionPackId, title, duration, instructions } = req.body;
+    const { questionPackId, title, duration, instructions } = req.body;
 
     // 1. Check if the question pack belongs to the teacher
     const questionPackData = await QuestionPack.findById(questionPackId);
@@ -13,13 +13,7 @@ const addExam = async (req, res) => {
       return res.status(403).json({ error: 'You do not own this question pack.' });
     }
 
-    // 2. Check if the teacher is authorized for the class
-    const classInfo = await Class.findById(classId);
-    if (!classInfo || classInfo.teacher.toString() !== teacherId) {
-      return res.status(403).json({ error: 'You are not authorized to create exams for this class.' });
-    }
-
-    // 3. Create a new exam from the question pack
+    // 2. Create a new exam from the question pack
     const newExam = new Exam({
       title,
       questionPack: questionPackId,
@@ -30,11 +24,6 @@ const addExam = async (req, res) => {
 
     await newExam.save();
 
-    // 4. Ensure classInfo.exams array exists before pushing the new exam
-    classInfo.exams = classInfo.exams || []; // Initialize the exams array if it doesn't exist
-    classInfo.exams.push(newExam._id);
-    await classInfo.save();
-
     res.status(201).json({ success: true, message: 'Exam created successfully', exam: newExam });
 
   } catch (error) {
@@ -42,6 +31,7 @@ const addExam = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while adding the exam.' });
   }
 };
+
 
 const getExam = async (req, res) => {
   try {
