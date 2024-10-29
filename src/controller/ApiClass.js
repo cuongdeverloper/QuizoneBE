@@ -298,6 +298,83 @@ const getAllMembersByClassId = async (req, res) => {
   }
 };
 
+const deleteStudentFromClass = async (req, res) => {
+  try {
+    const { classId, studentId } = req.body;
+    const authenticatedUser = req.user;
 
+    const classData = await Class.findById(classId);
+    if (!classData || classData.teacher.toString() !== authenticatedUser.id.toString()) {
+      return res.status(403).json({
+        errorCode: 7,
+        message: 'You are not authorized to remove students from this class'
+      });
+    }
+
+    // Check if the student exists in the class
+    if (!classData.students.includes(studentId)) {
+      return res.status(404).json({
+        errorCode: 8,
+        message: 'Student not found in this class'
+      });
+    }
+
+    // Remove the student from the class
+    classData.students = classData.students.filter(id => id.toString() !== studentId);
+    await classData.save();
+
+    return res.status(200).json({
+      errorCode: 0,
+      message: 'Student removed successfully',
+      data: classData
+    });
+  } catch (error) {
+    console.error('Error removing student from class:', error);
+    return res.status(500).json({
+      errorCode: 6,
+      message: 'An error occurred while removing the student from the class'
+    });
+  }
+};
+
+const deleteClass = async (req, res) => {
+  try {
+    const { classId } = req.params;
+    const authenticatedUser = req.user;
+
+    // Find the class
+    const classData = await Class.findById(classId);
+    if (!classData) {
+      return res.status(404).json({
+        errorCode: 1,
+        message: 'Class not found'
+      });
+    }
+
+    // Only allow the teacher or an admin to delete the class
+    const isTeacher = classData.teacher.toString() === authenticatedUser.id.toString();
+    if (!isTeacher && authenticatedUser.role !== 'admin') {
+      return res.status(403).json({
+        errorCode: 7,
+        message: 'You are not authorized to delete this class'
+      });
+    }
+
+    // Delete the class
+    await Class.findByIdAndDelete(classId);
+
+    return res.status(200).json({
+      errorCode: 0,
+      message: 'Class deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting class:', error);
+    return res.status(500).json({
+      errorCode: 6,
+      message: 'An error occurred while deleting the class'
+    });
+  }
+};
   module.exports = { createClass, getAllClasses, inviteStudentToClass,getClassesForUser,
-    getClassByClassId,removeQuestionPackFromClass,joinClassByInvite,getAllMembersByClassId };
+    getClassByClassId,removeQuestionPackFromClass,joinClassByInvite,getAllMembersByClassId,
+  deleteClass,deleteStudentFromClass};
