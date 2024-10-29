@@ -6,7 +6,7 @@ const passport = require('passport');
 const { createQuestionPack, getAllQuestionPack, searchQuestionPack, addQuestionPackToClass, getQuestionPackById, getAllQuestionPacksForTeacher, updateQuestionPack, getAllQuestionPackByAd, deleteQuestionPack } = require('../controller/ApiQuestionPack');
 const { addQuestionFlashCard, getQuestionFlashCardByQuestionPackId, updateFlashcard, deleteFlashcard } = require('../controller/ApiQuestionFlashCard');
 const { addComment, getComments, getCommentById, deleteComment, addReply, deleteReply } = require('../controller/ApiComment');
-const { createClass, getClassesForUser, inviteStudentToClass, getClassByClassId, removeQuestionPackFromClass, joinClassByInvite, getStudentsByClassId, getAllMembersByClassId } = require('../controller/ApiClass');
+const { createClass, getClassesForUser, inviteStudentToClass, getClassByClassId, removeQuestionPackFromClass, joinClassByInvite, getStudentsByClassId, getAllMembersByClassId, deleteStudentFromClass, deleteClass } = require('../controller/ApiClass');
 const { sendMessage, getMessages } = require('../controller/ApiMessage');
 const { addExam, getExam, getExamByQuestionPack } = require('../controller/ApiExam');
 const { submitExam, getExamResults, getStudentResults } = require('../controller/ApiResult');
@@ -97,8 +97,8 @@ routerApi.post('/class/questionPackToClass',checkAccessToken,addQuestionPackToCl
 routerApi.delete('/class/removeQp',checkAccessToken,removeQuestionPackFromClass)
 routerApi.get('/class/getMembers/:classId', checkAccessToken, getAllMembersByClassId);  
 routerApi.get('/join-class/:token', checkAccessToken, joinClassByInvite);  
-
-
+routerApi.delete('/delete-student',checkAccessToken,deleteStudentFromClass)
+routerApi.delete('/delete-class/:classId',checkAccessToken,deleteClass)
 // message:
 routerApi.post('/messages/:id', checkAccessToken, sendMessage);
 routerApi.get('/messages/:id', checkAccessToken, getMessages);
