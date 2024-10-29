@@ -304,6 +304,9 @@ const deleteStudentFromClass = async (req, res) => {
     const authenticatedUser = req.user;
 
     const classData = await Class.findById(classId);
+    console.log('classId',classId)
+    console.log('studentId',studentId)
+    console.log('classData',classData.teacher.toString())
     if (!classData || classData.teacher.toString() !== authenticatedUser.id) {
       return res.status(403).json({
         errorCode: 7,
