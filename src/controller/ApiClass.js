@@ -304,7 +304,7 @@ const deleteStudentFromClass = async (req, res) => {
     const authenticatedUser = req.user;
 
     const classData = await Class.findById(classId);
-    if (!classData || classData.teacher.toString() !== authenticatedUser.id.toString()) {
+    if (!classData || classData.teacher.toString() !== authenticatedUser.id) {
       return res.status(403).json({
         errorCode: 7,
         message: 'You are not authorized to remove students from this class'
@@ -352,7 +352,7 @@ const deleteClass = async (req, res) => {
     }
 
     // Only allow the teacher or an admin to delete the class
-    const isTeacher = classData.teacher.toString() === authenticatedUser.id.toString();
+    const isTeacher = classData.teacher.toString() === authenticatedUser.id;
     if (!isTeacher && authenticatedUser.role !== 'admin') {
       return res.status(403).json({
         errorCode: 7,
