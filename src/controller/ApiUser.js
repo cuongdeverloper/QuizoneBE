@@ -117,27 +117,40 @@ const getAllUsers = async (req, res) => {
   }
 };
 const updateUserProfile = async (req, res) => {
-  const { userId } = req.params; 
+  const { userId } = req.params;
+  
   uploadCloud.single('image')(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ message: `Image upload error: ${err.message}` });
     }
 
     const { username, role, email, phoneNumber, gender } = req.body;
-    const image = req.file ? req.file.path : null; 
-    if (userId !== req.user.id && req.user.role !=='admin') {
+    const image = req.file ? req.file.path : null;
+
+    // Check if the user is authorized to update
+    if (userId !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Forbidden: You can only update your own profile.' });
     }
+
+    // Validate required fields
     if (!username || !email) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
 
+    // Validate the role field
     const validRoles = ['teacher', 'student', 'admin'];
     if (!validRoles.includes(role)) {
       return res.status(400).json({ message: 'Invalid role.' });
     }
 
     try {
+      // Check if another user with the same username exists
+      const existingUser = await User.findOne({ username });
+      if (existingUser && existingUser._id.toString() !== userId) {
+        return res.status(203).json({ errorCode: 15, message: 'Username already exists, try another name.' });
+      }
+
+      // Update user profile
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
@@ -146,24 +159,22 @@ const updateUserProfile = async (req, res) => {
           email,
           phoneNumber,
           gender,
-          image 
+          image
         },
-        { new: true, runValidators: true } // Return the updated document and run validators
+        { new: true, runValidators: true }
       );
 
       if (!updatedUser) {
         return res.status(404).json({ message: 'User not found.' });
       }
 
-      res.status(200).json({ errorCode:0,message: 'User profile updated successfully', user: updatedUser });
+      res.status(200).json({ errorCode: 0, message: 'User profile updated successfully', user: updatedUser });
     } catch (error) {
-      if (error.code === 11000) {
-        return res.status(209).json({ message: 'Username already exists, try to another name !' });
-      }
       res.status(500).json({ message: 'Error updating user profile', error });
     }
   });
 };
+
 
 const deleteUser = async (req, res) => {
   const { userId } = req.params;
