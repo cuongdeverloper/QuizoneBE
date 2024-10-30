@@ -145,13 +145,10 @@ const updateUserProfile = async (req, res) => {
 
     try {
       // Check if another user with the same username or email exists
-      const existingUser = await User.findOne({ 
-        $or: [{ username }, { email }] 
-      });
+      const existingUser = await User.findOne({ username });
 
-      if (existingUser && existingUser._id !== userId) {
-        const conflictField = existingUser.username === username ? 'Username' : 'Email';
-        return res.status(209).json({ errorCode: 15, message: `${conflictField} already exists, try another.` });
+      if (existingUser && existingUser._id.toString() !== userId) {
+        return res.status(209).json({ errorCode: 15, message: 'Username already exists, try another.' });
       }
 
       // Update user profile
