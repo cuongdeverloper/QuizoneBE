@@ -118,7 +118,7 @@ const getAllUsers = async (req, res) => {
 };
 const updateUserProfile = async (req, res) => {
   const { userId } = req.params;
-  
+
   uploadCloud.single('image')(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ message: `Image upload error: ${err.message}` });
@@ -139,15 +139,19 @@ const updateUserProfile = async (req, res) => {
 
     // Validate the role field
     const validRoles = ['teacher', 'student', 'admin'];
-    if (!validRoles.includes(role)) {
+    if (role && !validRoles.includes(role)) {
       return res.status(400).json({ message: 'Invalid role.' });
     }
 
     try {
-      // Check if another user with the same username exists
-      const existingUser = await User.findOne({ username });
+      // Check if another user with the same username or email exists
+      const existingUser = await User.findOne({ 
+        $or: [{ username }, { email }] 
+      });
+
       if (existingUser && existingUser._id.toString() !== userId) {
-        return res.status(203).json({ errorCode: 15, message: 'Username already exists, try another name.' });
+        const conflictField = existingUser.username === username ? 'Username' : 'Email';
+        return res.status(209).json({ errorCode: 15, message: `${conflictField} already exists, try another.` });
       }
 
       // Update user profile
@@ -174,6 +178,7 @@ const updateUserProfile = async (req, res) => {
     }
   });
 };
+
 
 
 const deleteUser = async (req, res) => {
