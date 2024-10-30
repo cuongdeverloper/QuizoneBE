@@ -172,7 +172,7 @@ const updateUserProfile = async (req, res) => {
         return res.status(404).json({ message: 'User not found.' });
       }
 
-      res.status(200).json({ errorCode: 0, message: 'User profile updated successfully', user: updatedUser });
+      res.status(200).json({ errorCode: 0, message: 'User profile updated successfully', user: updatedUser ,existingUser:existingUser});
     } catch (error) {
       res.status(500).json({ message: 'Error updating user profile', error });
     }
