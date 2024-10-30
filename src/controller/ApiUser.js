@@ -147,7 +147,7 @@ const updateUserProfile = async (req, res) => {
       // Check if another user with the same username or email exists
       const existingUser = await User.findOne({ username });
 
-      if (existingUser && existingUser._id.toString() !== userId) {
+      if (existingUser && existingUser._id !== userId) {
         return res.status(209).json({ errorCode: 15, message: 'Username already exists, try another.' });
       }
 
