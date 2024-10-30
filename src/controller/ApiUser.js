@@ -149,7 +149,7 @@ const updateUserProfile = async (req, res) => {
         $or: [{ username }, { email }] 
       });
 
-      if (existingUser && existingUser._id.toString() !== userId) {
+      if (existingUser && existingUser._id !== userId) {
         const conflictField = existingUser.username === username ? 'Username' : 'Email';
         return res.status(209).json({ errorCode: 15, message: `${conflictField} already exists, try another.` });
       }
