@@ -124,7 +124,7 @@ const updateUserProfile = async (req, res) => {
       return res.status(400).json({ message: `Image upload error: ${err.message}` });
     }
 
-    const { username, role, email, phoneNumber, gender,currentUsername } = req.body;
+    const { username, role, email, phoneNumber, gender } = req.body;
     const image = req.file ? req.file.path : null;
 
     // Check if the user is authorized to update
@@ -147,7 +147,7 @@ const updateUserProfile = async (req, res) => {
       // Check if another user with the same username or email exists
       const existingUser = await User.findOne({ username });
 
-      if ((existingUser && existingUser._id !== userId)&&(currentUsername !==username)) {
+      if (existingUser && existingUser._id !== userId) {
         return res.status(209).json({ errorCode: 15, message: 'Username already exists, try another.' });
       }
 
