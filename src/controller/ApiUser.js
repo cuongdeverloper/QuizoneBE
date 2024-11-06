@@ -125,33 +125,29 @@ const updateUserProfile = async (req, res) => {
     }
 
     const { username, role, email, phoneNumber, gender } = req.body;
-    const image = req.file ? req.file.path : null;
+    const image = req.file ? req.file.path : req.body.image; // Use existing image if no new image
 
     // Check if the user is authorized to update
     if (userId !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Forbidden: You can only update your own profile.' });
     }
 
-    // Validate required fields
     if (!username || !email) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
 
-    // Validate the role field
     const validRoles = ['teacher', 'student', 'admin'];
     if (role && !validRoles.includes(role)) {
       return res.status(400).json({ message: 'Invalid role.' });
     }
 
     try {
-      // Check if another user with the same username or email exists
       const existingUser = await User.findOne({ username });
 
-      if (existingUser && existingUser._id !== userId) {
+      if (existingUser && existingUser._id.toString() !== userId) {
         return res.status(209).json({ errorCode: 15, message: 'Username already exists, try another.' });
       }
 
-      // Update user profile
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
@@ -160,7 +156,7 @@ const updateUserProfile = async (req, res) => {
           email,
           phoneNumber,
           gender,
-          image
+          image,
         },
         { new: true, runValidators: true }
       );
@@ -169,12 +165,13 @@ const updateUserProfile = async (req, res) => {
         return res.status(404).json({ message: 'User not found.' });
       }
 
-      res.status(200).json({ errorCode: 0, message: 'User profile updated successfully', user: updatedUser ,existingUser:existingUser});
+      res.status(200).json({ errorCode: 0, message: 'User profile updated successfully', user: updatedUser });
     } catch (error) {
       res.status(500).json({ message: 'Error updating user profile', error });
     }
   });
 };
+
 
 
 
